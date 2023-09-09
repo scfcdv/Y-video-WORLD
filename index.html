@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="icon" href="https://scfcdv.github.io/homeweb2/favicon.ico">
+<title>人気動画</title>
+</head>
+<body>
+    <div id="content"></div>
+    <script>
+        // あなたのAPIキーを設定します。
+        var apiKey = 'AIzaSyD6BIFAJTeleaYy6OnzSvK1hWA-bSpcilw';
+
+        // 動画を取得する関数
+        function getVideos(pageToken) {
+            var url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&maxResults=50&key=' + apiKey;
+
+            // ページトークンがある場合はURLに追加します。
+            if (pageToken) {
+                url += '&pageToken=' + pageToken;
+            }
+
+            // APIを呼び出します。
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    // 動画の情報を表示します。
+                    for (var i = 0; i < data.items.length; i++) {
+                        var video = data.items[i];
+                        const thumbnailUrl = video.snippet.thumbnails.medium.url;
+                        const videoId = video.id;
+                        document.getElementById('content').innerHTML += `<a href="https://www.youtube.com/watch?v=${videoId}" target="_blank"><img src="${thumbnailUrl}"></a>`;
+                    }
+
+                    // 次のページトークンがある場合は、再度動画を取得します。
+                    if (data.nextPageToken) {
+                        getVideos(data.nextPageToken);
+                    }
+                });
+        }
+
+        // 初回の動画取得を行います。
+        getVideos();
+    </script>
+</body>
+</html>
+<a href="https://www.youtube.com/watch?v=${videoId}" target="_blank"><img src="${thumbnailUrl}"></a>
